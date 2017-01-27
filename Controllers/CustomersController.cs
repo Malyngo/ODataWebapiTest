@@ -27,7 +27,8 @@ namespace ODataWebapiTest.Controllers
     {
         private static ODataValidationSettings _validationSettings = new ODataValidationSettings()
         {
-            AllowedQueryOptions = AllowedQueryOptions.All
+            AllowedQueryOptions = AllowedQueryOptions.All,
+            AllowedFunctions = AllowedFunctions.All
         };
 
         IQueryable<Customer> customers;
@@ -55,7 +56,6 @@ namespace ODataWebapiTest.Controllers
         }
 
         // GET: odata/Customers
-        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.OrderBy)]
         public IHttpActionResult GetCustomers(ODataQueryOptions<Customer> queryOptions)
         {
             // validate the query.
@@ -68,7 +68,7 @@ namespace ODataWebapiTest.Controllers
                 return BadRequest(ex.Message);
             }
 
-            return Ok<IEnumerable<Customer>>(customers);
+            return Ok<IQueryable<Customer>>((IQueryable<Customer>)queryOptions.ApplyTo(customers));
 
         }
 
